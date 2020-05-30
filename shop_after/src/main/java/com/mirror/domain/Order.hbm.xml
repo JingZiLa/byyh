@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    <hibernate-mapping>
+    	<class name="com.mirror.domain.Order" table="orders">
+    		<id name="order_id" column="order_id">
+    			<generator class="native"/>
+    		</id>
+    		
+    		<property name="order_number" column="order_number"/>
+    		<property name="order_status" column="order_status"/>
+    		<property name="order_money" column="order_money"/>
+    		<property name="order_addtime" column="order_addtime"/>
+    		<property name="order_mdse_quantity" column="order_mdse_quantity"/>
+    		
+    		<many-to-one name="user" class="com.mirror.domain.User" column="order_users_id"></many-to-one>
+    		<many-to-one name="mdse" class="com.mirror.domain.Mdse" column="order_mdse_id"></many-to-one>
+    		<many-to-one name="orderDetail" class="com.mirror.domain.OrderDetail" column="order_orderdetail_id"/>
+    	</class>
+    	
+    </hibernate-mapping>

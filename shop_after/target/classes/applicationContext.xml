@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- <context:annotation-config /> -->
+	<!-- spring 扫描路径，注意当前工程只需要扫描dao和service，srpingmvc或者struts2注解才有变化 -->
+<!-- 	<context:component-scan base-package="dao,service" />
+ -->
+	<!-- Spring整合Hibernate -->
+	<!-- 引入外部属性文件=============================== -->
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<!-- 配置C3P0连接池=============================== -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- 引入Hibernate的配置的信息=============== -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 注入连接池 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 配置Hibernate的相关属性 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+		
+		<!-- 设置映射文件 -->
+		<property name="mappingResources">
+			<list>
+				<value>com/mirror/domain/User.hbm.xml</value>
+				<value>com/mirror/domain/Mdse.hbm.xml</value>
+				<value>com/mirror/domain/Sort.hbm.xml</value>
+				<value>com/mirror/domain/Order.hbm.xml</value>
+				<value>com/mirror/domain/OrderDetail.hbm.xml</value>
+				<value>com/mirror/domain/Role.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	
+	<!-- 开启注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 用户相关类配置 -->
+	<!-- 配置UserAction -->
+	<bean id="UserAction" class="com.mirror.web.action.UserAction" scope="prototype">
+		<property name="UserService" ref="UserService"/>
+	</bean>
+	<!-- 配置UserDao -->
+	<bean id="UserDao" class="com.mirror.dao.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置UserService -->
+	<bean id="UserService" class="com.mirror.service.impl.UserServiceImpl">
+		<property name="UserDao" ref="UserDao"/>
+	</bean>
+	
+	
+	<!-- 商品相关类配置 -->
+	<!-- 配置MdseAction -->
+	<bean id="MdseAction" class="com.mirror.web.action.MdseAction" scope="prototype">
+		<property name="MdseService" ref="MdseService"/>
+		<property name="SortService" ref="SortService"/>
+	</bean>
+	<!-- 配置MdseDao -->
+	<bean id="MdseDao" class="com.mirror.dao.impl.MdseDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置MdseService -->
+	<bean id="MdseService" class="com.mirror.service.impl.MdseServiceImpl">
+		<property name="MdseDao" ref="MdseDao"/>
+	</bean>
+	
+	<!-- 商品分类相关类配置 -->
+	<!-- 配置SortAction -->
+	<bean id="SortAction" class="com.mirror.web.action.SortAction" scope="prototype">
+		<property name="SortService" ref="SortService"/>
+	</bean>
+	<!-- 配置SortDao -->
+	<bean id="SortDao" class="com.mirror.dao.impl.SortDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置SortService -->
+	<bean id="SortService" class="com.mirror.service.impl.SortServiceImpl">
+		<property name="SortDao" ref="SortDao"/>
+	</bean>
+	
+	
+	<!-- 订单相关类配置 -->
+	<!-- 配置OrderAction -->
+	<bean id="OrderAction" class="com.mirror.web.action.OrderAction" scope="prototype">
+		<property name="OrderService" ref="OrderService"/>
+		<property name="MdseService" ref="MdseService"/>
+		<property name="UserService" ref="UserService"/>
+	</bean>
+	<!-- 配置SortDao -->
+	<bean id="OrderDao" class="com.mirror.dao.impl.OrderDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置SortService -->
+	<bean id="OrderService" class="com.mirror.service.impl.OrderServiceImpl">
+		<property name="OrderDao" ref="OrderDao"/>
+	</bean>
+	
+	
+	<!-- 订单详情相关类配置 -->
+	<!-- 配置OrderDetailAction -->
+	<bean id="OrderDetailAction" class="com.mirror.web.action.OrderDetailAction" scope="prototype">
+		<property name="OrderDetailService" ref="OrderDetailService"/>
+		<property name="MdseService" ref="MdseService"/>
+	</bean>
+	<!-- 配置SortDao -->
+	<bean id="OrderDetailDao" class="com.mirror.dao.impl.OrderDetailDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置SortService -->
+	<bean id="OrderDetailService" class="com.mirror.service.impl.OrderDetailServiceImpl">
+		<property name="OrderDetailDao" ref="OrderDetailDao"/>
+	</bean>
+	
+	
+	<!-- 用户角色相关类配置 -->
+	<!-- 配置RoleAction -->
+	<bean id="RoleAction" class="com.mirror.web.action.RoleAction" scope="prototype">
+		<property name="UserService" ref="UserService"/>
+		<property name="RoleService" ref="RoleService"/>
+	</bean>
+	<!-- 配置SortDao -->
+	<bean id="RoleDao" class="com.mirror.dao.impl.RoleDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 配置SortService -->
+	<bean id="RoleService" class="com.mirror.service.impl.RoleServiceImpl">
+		<property name="RoleDao" ref="RoleDao"/>
+	</bean>
+	
+	
+	
+	<!-- 配置小程序相关类 -->
+	<!-- 配置： 商品Action-->
+	<bean id="AppletMdseAction" class="com.mirror.web.applet_action.AppletMdseAction" scope="prototype">
+		<property name="MdseService" ref="MdseService"/>
+		<property name="SortService" ref="SortService"/>
+	</bean>
+	<!-- 配置：分类Action -->
+	<bean id="AppletSortAction" class="com.mirror.web.applet_action.AppletSortAction" scope="prototype">
+		<property name="SortService" ref="SortService"/>
+	</bean>
+	<!-- 配置：订单Action -->
+	<bean id="AppletOrderAction" class="com.mirror.web.applet_action.AppletOrderAction" scope="prototype">
+		<property name="OrderService" ref="OrderService"/>
+		<property name="MdseService" ref="MdseService"/>
+		<property name="UserService" ref="UserService"/>
+	</bean>
+	<!-- 配置：订单Action -->
+	<bean id="AppletOrderDetailAction" class="com.mirror.web.applet_action.AppletOrderDetailAction" scope="prototype">
+		<property name="OrderService" ref="OrderService"/>
+		<property name="OrderDetailService" ref="OrderDetailService"/>
+	</bean>
+	<!-- 配置：UserAction -->
+	<bean id="AppletUserAction" class="com.mirror.web.applet_action.AppletUserAction" scope="prototype">
+		<property name="UserService" ref="UserService"/>
+	</bean>
+</beans>

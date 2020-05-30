@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    <hibernate-mapping>
+    	<class name="com.mirror.domain.User" table="user">
+    		<id name="user_id" column="user_id">
+				<generator class="native"/>
+    		</id>
+  
+    		<property name="user_code" column="user_code"/>
+    		<property name="user_password" column="user_password"/>
+    		<property name="user_name" column="user_name"/>
+    		<property name="user_sex" column="user_sex"/>
+    		<property name="user_email" column="user_email"/>
+    		<property name="user_state" column="user_state"/>
+    		<property name="user_province" column="user_province"/>
+    		<property name="user_city" column="user_city"/>
+    		<property name="user_headimge" column="user_headimge"/>
+    		<property name="user_status" column="user_status"/>
+    		<property name="user_phone" column="user_phone"/>
+    		<property name="user_address" column="user_address"/>
+    		<property name="user_addtime" column="user_addtime"/>
+    		<property name="user_area" column="user_area"/>
+    		
+    		<property name="user_info" column="user_info"/>
+    		
+    		<many-to-one name="role" class="com.mirror.domain.Role" column="role_user_id"/>
+    		
+    		<set name="mdse" inverse="true" cascade="delete">
+    			<key column="mdse_user_id"></key>
+    			<one-to-many class="com.mirror.domain.Mdse"/>
+    		</set>
+    		<set name="order" inverse="true" cascade="delete">
+    			<key column="order_users_id"></key>
+    			<one-to-many class="com.mirror.domain.Order"/>
+    		</set>
+    		<set name="orderDetail" inverse="true" cascade="delete">
+    			<key column="order_detail_user_id"></key>
+    			<one-to-many class="com.mirror.domain.OrderDetail"/>
+    		</set>
+    	</class>
+    </hibernate-mapping>

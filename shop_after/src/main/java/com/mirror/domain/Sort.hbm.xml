@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.mirror.domain.Sort" table="sort">
+		<id name="sort_id" column="sort_id">
+			<generator class="native" />
+		</id>
+
+		<property name="sort_name" column="sort_name" />
+		<property name="sort_addtime" column="sort_addtime" />
+		<property name="sort_status" column="sort_status" />
+
+		<set name="mdse" >
+			<key column="mdse_sort_id"></key>
+			<one-to-many class="com.mirror.domain.Mdse" />
+		</set>
+		<many-to-one name="user" class="com.mirror.domain.User" column="sort_user_id"/>
+	</class>
+</hibernate-mapping>
